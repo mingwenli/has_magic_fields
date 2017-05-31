@@ -9,12 +9,16 @@ class MagicField < ActiveRecord::Base
   before_save :set_pretty_name
 
   def self.datatypes
-    ["string","check_box_boolean", "date", "datetime", "integer"]
+    ["string", "check_box_boolean", "date", "datetime", "integer", "float", "boolean"]
   end
 
   def type_cast(value)
     begin
       case datatype.to_sym
+        when :float
+          value.to_f
+        when :boolean
+          (value.to_s == 'true') ? true : false
         when :string
           value
         when :check_box_boolean
