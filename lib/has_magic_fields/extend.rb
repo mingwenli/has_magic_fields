@@ -44,7 +44,11 @@ module HasMagicFields
 
       def magic_fields_with_scoped(type_scoped = nil)
         type_scoped = type_scoped.blank? ? self.class.name : type_scoped.classify
-        magic_fields_without_scoped.where(type_scoped: type_scoped)
+        if magic_fields_without_scoped 
+          magic_fields_without_scoped.where(type_scoped: type_scoped)
+        else
+          []
+        end
       end
       
       def method_missing(method_id, *args)
