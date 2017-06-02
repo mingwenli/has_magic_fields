@@ -19,7 +19,7 @@ module HasMagicFields
           class_eval do
             def inherited_magic_fields
               raise "Cannot inherit MagicFields from a non-existant association: #{@inherited_from}" unless self.class.method_defined?(inherited_from)# and self.send(inherited_from)
-              self.send(inherited_from).magic_fields
+              self.send(inherited_from) && self.send(inherited_from).magic_fields
             end
           end
           alias_method :magic_fields, :inherited_magic_fields unless method_defined? :magic_fields
