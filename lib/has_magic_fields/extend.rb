@@ -9,7 +9,7 @@ module HasMagicFields
         # Associations
         has_many :magic_attribute_relationships, :as => :owner, :dependent => :destroy
         has_many :magic_attributes, :through => :magic_attribute_relationships, :dependent => :destroy
-        
+
         # Inheritence
         cattr_accessor :inherited_from
 
@@ -32,7 +32,7 @@ module HasMagicFields
         end
         alias_method  :magic_fields_without_scoped, :magic_fields
       end
-      
+
     end
 
     included do
@@ -44,13 +44,13 @@ module HasMagicFields
 
       def magic_fields_with_scoped(type_scoped = nil)
         type_scoped = type_scoped.blank? ? self.class.name : type_scoped.classify
-        if magic_fields_without_scoped 
+        if magic_fields_without_scoped
           magic_fields_without_scoped.where(type_scoped: type_scoped)
         else
           []
         end
       end
-      
+
       def method_missing(method_id, *args)
         super(method_id, *args)
       rescue NoMethodError
@@ -72,9 +72,9 @@ module HasMagicFields
 
       def valid?(context = nil)
         output = super(context)
-        magic_fields_with_scoped.each do |field| 
+        magic_fields_with_scoped.each do |field|
           if field.is_required?
-            validates_presence_of(field.name) 
+            validates_presence_of(field.name)
           end
         end
         errors.empty? && output
@@ -90,22 +90,22 @@ module HasMagicFields
 
       def write_magic_attribute(field_name, value)
         field = find_magic_field_by_name(field_name)
-        attribute = find_magic_attribute_by_field(field) 
+        attribute = find_magic_attribute_by_field(field)
         (attr = attribute.first) ? update_magic_attribute(attr, value) : create_magic_attribute(field, value)
       end
-      
+
       def find_magic_attribute_by_field(field)
         magic_attributes.to_a.find_all {|attr| attr.magic_field_id == field.id}
       end
-      
+
       def find_magic_field_by_name(attr_name)
         magic_fields_with_scoped.to_a.find {|column| column.name == attr_name}
       end
-      
+
       def create_magic_attribute(magic_field, value)
         magic_attributes << MagicAttribute.create(:magic_field => magic_field, :value => value)
       end
-      
+
       def update_magic_attribute(magic_attribute, value)
         magic_attribute.update_attributes(:value => value)
       end
@@ -121,5 +121,3 @@ module HasMagicFields
     end
   end
 end
-
-
