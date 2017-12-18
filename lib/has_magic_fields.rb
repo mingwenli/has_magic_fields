@@ -5,7 +5,7 @@ module HasMagicFields
   class Engine < ::Rails::Engine
     paths = Dir[File.dirname(__FILE__), '/app/models/**/']
 
-    if !Rails.env.development?
+    if Rails.env.production?
       config.eager_load_paths += paths
     end
   end
